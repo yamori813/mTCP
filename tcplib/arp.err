@@ -1,0 +1,14 @@
+../tcpinc/arp.h(41): Error! E054: col(10) invalid #include directive
+../tcpinc/arp.h(41): Note! N393: col(10) included from arp.cpp(43)
+../tcpinc/arp.h(48): Error! E029: col(38) symbol 'ARP_MAX_ENTRIES' has not been declared
+../tcpinc/arp.h(50): Error! E029: col(38) symbol 'ARP_MAX_PENDING' has not been declared
+../tcpinc/arp.h(53): Error! E029: col(33) symbol 'ARP_RETRIES' has not been declared
+../tcpinc/arp.h(55): Error! E029: col(38) symbol 'ARP_TIMEOUT' has not been declared
+../tcpinc/arp.h(62): Error! E059: col(10) unable to open 'Eth.h'
+../tcpinc/utils.h(47): Error! E054: col(10) invalid #include directive
+../tcpinc/packet.h(43): Error! E054: col(10) invalid #include directive
+../tcpinc/packet.h(54): Error! E029: col(35) symbol 'PACKET_BUFFERS' has not been declared
+../tcpinc/packet.h(56): Error! E029: col(42) symbol 'PACKET_BUFFER_LEN' has not been declared
+../tcpinc/packet.h(58): Error! E029: col(52) symbol 'PKT_DUMP_BYTES' has not been declared
+../tcpinc/ip.h(43): Error! E054: col(10) invalid #include directive
+../tcpinc/ip.h(44): Error! E059: col(10) unable to open 'Utils.h'
