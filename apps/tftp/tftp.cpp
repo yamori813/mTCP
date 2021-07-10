@@ -359,12 +359,11 @@ void recive()
 
 
 char *HelpText[] = {
-  "\ntftp [options] <ipaddr>\n",
+  "\ntftp [options] <ipaddr> <filename>\n",
   "Options:",
   "  -help          Shows this help",
   "  -port <n>      Contact server on port <n> (default=123)",
-  "  -retries <n>   Number of times to retry if no answer (default=1)",
-  "  -set           Set the system time (default is not to)",
+  "  -send          Send file to host",
   "  -timeout <n>   Seconds to wait for a server response (default=3)",
   NULL
 };
@@ -436,8 +435,14 @@ void parseArgs( int argc, char *argv[] ) {
 
   strncpy( ServerAddrName, argv[i], SERVER_ADDR_NAME_LEN );
   ServerAddrName[ SERVER_ADDR_NAME_LEN - 1 ] = 0;
+  ++i;
 
-  strcpy( FileName, argv[i+1] );
+  if ( i == argc ) {
+    puts( "You need to specify a file name" );
+    usage( );
+  }
+
+  strcpy( FileName, argv[i] );
 
 }
 
@@ -529,7 +534,7 @@ void putUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
   unsigned int pkttyp = packet[off+0] << 8 | packet[off+1];
 
   if (Verbose)
-    printf("MORIMORI R %d\n", pkttyp);
+    printf("packet recive at PUT %d\n", pkttyp);
 
   ServerPort = ntohs(udp->src);
 
@@ -552,6 +557,7 @@ void putUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
       TargetTime = 1;
     }
   } else {
+    printf("Error occur\n");
     TargetTime = 1;
   }
 
@@ -565,7 +571,7 @@ void getUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
   unsigned int blknum = packet[off+2] << 8 | packet[off+3];
   int size = ntohs(udp->len) - 8;
   if (Verbose)
-    printf("MORIMORI recv %d %x %d %d\n", (unsigned short)ntohs(udp->src), pkttyp, blknum, ntohs(udp->len) - 8);
+    printf("packet recive at GET %d\n", pkttyp);
 
   ServerPort = ntohs(udp->src);
 
@@ -584,7 +590,8 @@ void getUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
       TargetTime = 1;
   }
   if (pkttyp == TFTP_ERROR) {
-      TargetTime = 1;
+    TargetTime = 1;
+    printf("Error occur\n");
   }
 
   // We are done processing this packet.  Remove it from the front of
