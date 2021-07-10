@@ -13,10 +13,12 @@ OBJS=tftp.o
 OBJS+=packet.o arp.o eth.o ip.o utils.o timer.o udp.o dns.o trace.o
 OBJS+=ipasm.o
 
+WLOBJS!=echo $(OBJS) | sed 's/ /,/g'
+
 CFLAGS=-ms -d+CFG_H=$(CFG) -i=. -i=../../../watcom/h -i=../../include -i=../../tcpinc -oh -ok -os -s -oa -ei -zp2 -zpw -we
 
 tftp.exe: $(OBJS)
-	wlink system dos option map option eliminate option stack=4096 name $@ file packet.o,arp.o,eth.o,ip.o,utils.o,timer.o,udp.o,dns.o,trace.o,ipasm.o,tftp.o
+	wlink system dos option map option eliminate option stack=4096 name $@ file $(WLOBJS)
 	
 tftp.o: $*.cpp
 	wpp $(CFLAGS) $<
