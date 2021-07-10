@@ -302,7 +302,7 @@ void send()
   while ( TargetTime == 0 ) {
 
     if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
-      TRACE_WARN(( "Sntp: Timeout waiting for tftp response\n" ));
+      TRACE_WARN(( "TFTP: Timeout waiting for tftp response\n" ));
       puts( "Timeout waiting for server response" );
       exit( 1 );
     }
@@ -341,7 +341,7 @@ void recive()
   while ( TargetTime == 0 ) {
 
     if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
-      TRACE_WARN(( "Sntp: Timeout waiting for tftp response\n" ));
+      TRACE_WARN(( "TFTP: Timeout waiting for tftp response\n" ));
       puts( "Timeout waiting for server response" );
       exit( 1 );
     }
@@ -509,7 +509,7 @@ int8_t sendRequest( int reqLen ) {
   while ( rc == 1 ) {
 
     if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( 2000 ) ) {
-      TRACE_WARN(( "Sntp: Arp timeout sending request\n" ));
+      TRACE_WARN(( "TFTP: Arp timeout sending request\n" ));
       puts( "Warning: ARP timeout sending request - check your gateway setting" );
       return -1;
     }
