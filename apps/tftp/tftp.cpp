@@ -283,6 +283,11 @@ void send()
 
   targetFile = fopen( FileName, "rb" );
 
+  if ( targetFile == NULL ) {
+    puts( "FIle dose not exist" );
+    return;
+  }
+
   // Register UDP Handler - should never fail
   Udp::registerCallback( 1024, putUdpHandler );
 
@@ -319,7 +324,7 @@ void send()
 void recive()
 {
 
-  targetFile = fopen( FileName, "wb" );
+  targetFile = NULL;
 
   // Register UDP Handler - should never fail
   Udp::registerCallback( 1024, getUdpHandler );
@@ -351,7 +356,6 @@ void recive()
 
   }
 
-  fclose( targetFile );
 }
   
 
@@ -576,18 +580,23 @@ void getUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
   ServerPort = ntohs(udp->src);
 
   if (pkttyp == TFTP_DATA) {
+    if ( targetFile == NULL)
+      targetFile = fopen( FileName, "wb" );
 
     int len = makeACK((char *)&Outgoing.buf, blknum);
     sendRequest(len);
 
-  // Quick sanity check
+    // Save data
 
     if ( size > 4 ) {
       int rc = fwrite( packet + off + 4, size - 4, 1, targetFile );
     }
 
-    if (size != 512 + 4)
+    // check last block
+    if (size != 512 + 4) {
       TargetTime = 1;
+      fclose( targetFile );
+    }
   }
   if (pkttyp == TFTP_ERROR) {
     TargetTime = 1;
