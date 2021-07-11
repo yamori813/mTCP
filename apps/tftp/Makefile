@@ -37,40 +37,27 @@ OBJS+=ipasm.o
 
 WLOBJS!=echo $(OBJS) | sed 's/ /,/g'
 
-CFLAGS=$(MEMMOD) -d+CFG_H=$(CFG) -i=. -i=../../../watcom/h -i=../../include -i=../../tcpinc -oh -ok -os -s -oa -ei -zp2 -zpw -we
+CFLAGS=$(MEMMOD) -d+CFG_H=$(CFG)
+CFLAGS+=-i=. -i=../../../watcom/h -i=../../include -i=../../tcpinc
+CFLAGS+=-oh -ok -os -s -oa -ei -zp2 -zpw -we
 
 tftp.exe: $(OBJS)
 	wlink system dos option map option eliminate option stack=4096 name $@ file $(WLOBJS)
 	
-tftp.o: $*.cpp
+.cpp.o:
 	wpp $(CFLAGS) $<
+
+tftp.o: $*.cpp
 
 packet.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 arp.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 eth.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 ip.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 utils.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 timer.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 udp.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 dns.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
-
 trace.o: $(LIBDIR)/$*.cpp
-	wpp $(CFLAGS) $<
 
 ipasm.o: $(LIBDIR)/$*.asm
 	wasm $(MEMMOD) $<
