@@ -69,6 +69,7 @@ uint8_t  Verbose = 0;
 uint8_t  SendFile = 0;
 
 time_t   ProcessFin = 0;
+uint8_t	 GetResponce;
 
 enum tftp_opcode_t {
   TFTP_RRQ = 1,
@@ -248,13 +249,14 @@ void send()
   // Spin again until we get a response
 
   clockTicks_t startTime = TIMER_GET_CURRENT( );
+  GetResponce = 0;
 
   while ( ProcessFin == 0 ) {
 
-    if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
+    if ( GetResponce == 0 && Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
       TRACE_WARN(( "TFTP: Timeout waiting for tftp response\n" ));
       puts( "Timeout waiting for server response" );
-      exit( 1 );
+      return;
     }
 
     PACKET_PROCESS_SINGLE;
@@ -287,13 +289,14 @@ void recive()
   // Spin again until we get a response
 
   clockTicks_t startTime = TIMER_GET_CURRENT( );
+  GetResponce = 0;
 
   while ( ProcessFin == 0 ) {
 
-    if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
+    if (GetResponce == 0 && Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
       TRACE_WARN(( "TFTP: Timeout waiting for tftp response\n" ));
       puts( "Timeout waiting for server response" );
-      exit( 1 );
+      return;
     }
 
     PACKET_PROCESS_SINGLE;
@@ -484,6 +487,7 @@ void putUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
 
   if (Verbose)
     printf("packet recive at PUT %d\n", pkttyp);
+  GetResponce = 1;
 
   ServerPort = ntohs(udp->src);
 
@@ -521,6 +525,7 @@ void getUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
   int size = ntohs(udp->len) - 8;
   if (Verbose)
     printf("packet recive at GET %d\n", pkttyp);
+  GetResponce = 1;
 
   ServerPort = ntohs(udp->src);
 
