@@ -2,6 +2,7 @@
 
    mTCP tftp.cpp
    Copyright (C) 2010-2020 Michael B. Brutman (mbbrutman@gmail.com)
+   Copyright (C) 2021 Hiroki Mori
    mTCP web page: http://www.brutman.com/mTCP
 
 
@@ -126,62 +127,6 @@ char *strpcpy(char *dest, char *src, int *pos)
 }
 
 FILE *targetFile;
-
-char printTimeStampBuffer[40];
-
-char * printTimeStamp( uint32_t ts, uint16_t local ) {
-
-  time_t ts1 = ts;
-
-  struct tm tmbuf;
-
-  if ( local ) {
-    _localtime( &ts1, &tmbuf );
-  }
-  else {
-    _gmtime( &ts1, &tmbuf );
-  }
-
-  sprintf( printTimeStampBuffer, "%04d-%02d-%02d %02d:%02d:%02d",
-          tmbuf.tm_year+1900, tmbuf.tm_mon+1, tmbuf.tm_mday,
-          tmbuf.tm_hour, tmbuf.tm_min, tmbuf.tm_sec );
-
-  return printTimeStampBuffer;
-
-}
-
-
-
-
-int16_t setDosDateTime( void ) {
-
-  struct dosdate_t dos_date;
-  struct dostime_t dos_time;
-
-
-  time_t ts1 = TargetTime;
-
-  struct tm tmbuf;
-  _localtime( &ts1, &tmbuf );
-
-  dos_date.year = tmbuf.tm_year + 1900;
-  dos_date.month = tmbuf.tm_mon+1;
-  dos_date.day = tmbuf.tm_mday;
-
-  int rc1 = _dos_setdate( &dos_date );
-
-  dos_time.hour = tmbuf.tm_hour;
-  dos_time.minute = tmbuf.tm_min;
-  dos_time.second = tmbuf.tm_sec;
-  dos_time.hsecond = 50;
-
-  int rc2 = _dos_settime( &dos_time );
-
-  if (rc1 || rc2 ) return 1;
-
-  return 0;
-}
-
 
 
 static char CopyrightMsg1[] = "mTCP TFTP Client by Hiroki Mori (C)opyright 2021\n";
