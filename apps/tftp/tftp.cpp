@@ -68,7 +68,7 @@ uint16_t TimeoutSecs = 3;
 uint8_t  Verbose = 0;
 uint8_t  SendFile = 0;
 
-time_t   TargetTime = 0;
+time_t   ProcessFin = 0;
 
 enum tftp_opcode_t {
   TFTP_RRQ = 1,
@@ -242,14 +242,14 @@ void send()
 
   if ( rc == -1 ) {
     puts( "Error: Unable to send UDP packets!" );
-    exit( 1 );
+    return;
   }
       
   // Spin again until we get a response
 
   clockTicks_t startTime = TIMER_GET_CURRENT( );
 
-  while ( TargetTime == 0 ) {
+  while ( ProcessFin == 0 ) {
 
     if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
       TRACE_WARN(( "TFTP: Timeout waiting for tftp response\n" ));
@@ -281,14 +281,14 @@ void recive()
 
   if ( rc == -1 ) {
     puts( "Error: Unable to send UDP packets!" );
-    exit( 1 );
+    return;
   }
       
   // Spin again until we get a response
 
   clockTicks_t startTime = TIMER_GET_CURRENT( );
 
-  while ( TargetTime == 0 ) {
+  while ( ProcessFin == 0 ) {
 
     if ( Timer_diff( startTime, TIMER_GET_CURRENT( ) ) > TIMER_MS_TO_TICKS( TimeoutSecs ) ) {
       TRACE_WARN(( "TFTP: Timeout waiting for tftp response\n" ));
@@ -503,11 +503,11 @@ void putUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
         SendEOF = 1;
     } else {
       // Last ack
-      TargetTime = 1;
+      ProcessFin = 1;
     }
   } else {
     printf("Error occur\n");
-    TargetTime = 1;
+    ProcessFin = 1;
   }
 
   Buffer_free( packet );
@@ -539,12 +539,12 @@ void getUdpHandler( const unsigned char *packet, const UdpHeader *udp ) {
 
     // check last block
     if (size != 512 + 4) {
-      TargetTime = 1;
+      ProcessFin = 1;
       fclose( targetFile );
     }
   }
   if (pkttyp == TFTP_ERROR) {
-    TargetTime = 1;
+    ProcessFin = 1;
     printf("Error occur\n");
   }
 
